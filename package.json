@@ -1,0 +1,22 @@
+{
+  "name": "perishable-order-optimizer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static SPA for optimizing perishable warehouse order quantities and store allocations using Monte Carlo heuristics.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js,.mjs",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "eslint": "^9.9.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.8.0",
+    "prettier": "^3.3.3",
+    "vite": "^5.4.1"
+  }
+}

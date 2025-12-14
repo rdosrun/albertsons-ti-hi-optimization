@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perishable Order Optimizer</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Monte Carlo &amp; heuristic allocation</p>
+          <h1>Perishable Order Optimizer</h1>
+          <p class="lede">
+            Estimate a warehouse buy quantity (Q) and store allocations (aᵢ) that balance profit,
+            fill, and waste for perishable SKUs—all in your browser.
+          </p>
+          <div class="hero-actions">
+            <button id="run-btn" class="primary">Run optimization</button>
+            <button id="reset-btn" class="ghost">Reset to sample data</button>
+          </div>
+        </div>
+        <div class="kpi-strip" id="kpi-strip">
+          <div class="kpi">
+            <div class="kpi-label">Recommended Q</div>
+            <div class="kpi-value" id="kpi-q">-</div>
+            <div class="kpi-sub" id="kpi-confidence">awaiting run</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Avg Profit</div>
+            <div class="kpi-value" id="kpi-profit">-</div>
+            <div class="kpi-sub">per simulation</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Fill Rate</div>
+            <div class="kpi-value" id="kpi-fill">-</div>
+            <div class="kpi-sub">units filled / demand</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Waste Ratio</div>
+            <div class="kpi-value" id="kpi-waste">-</div>
+            <div class="kpi-sub">avg unsold / Q</div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Inputs</p>
+              <h2>SKU &amp; warehouse variables</h2>
+            </div>
+            <div class="chip">Runs offline</div>
+          </div>
+          <div class="grid two-cols">
+            <div class="field">
+              <label for="unit-price">Unit price</label>
+              <div class="input-prefix"><span>$</span><input id="unit-price" type="number" step="0.01" /></div>
+            </div>
+            <div class="field">
+              <label for="unit-cost">Unit cost</label>
+              <div class="input-prefix"><span>$</span><input id="unit-cost" type="number" step="0.01" /></div>
+            </div>
+            <div class="field">
+              <label for="salvage-value">Salvage value</label>
+              <div class="input-prefix"><span>$</span><input id="salvage-value" type="number" step="0.01" /></div>
+            </div>
+            <div class="field">
+              <label for="stockout-penalty">Stockout penalty</label>
+              <div class="input-prefix"><span>$</span><input id="stockout-penalty" type="number" step="0.01" /></div>
+            </div>
+            <div class="field">
+              <label for="iterations">Simulation iterations</label>
+              <input id="iterations" type="number" min="100" step="100" />
+            </div>
+            <div class="field">
+              <label for="service-level">Service priority tilt</label>
+              <input id="service-level" type="range" min="0" max="1" step="0.05" />
+              <p class="hint">Weight given to store priority when allocating.</p>
+            </div>
+            <div class="field">
+              <label for="seed">Random seed</label>
+              <input id="seed" type="number" />
+              <p class="hint">Keep fixed for reproducible runs.</p>
+            </div>
+            <div class="field">
+              <label for="q-step">Q grid step</label>
+              <input id="q-step" type="number" min="1" />
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Demand</p>
+              <h2>Stores</h2>
+              <p class="hint">Provide mean/standard deviation forecasts and a priority weight per store.</p>
+            </div>
+            <div class="actions">
+              <button id="add-store" class="ghost">Add store</button>
+              <button id="export-json" class="ghost">Export JSON</button>
+              <label class="upload ghost">
+                <input type="file" id="import-json" accept="application/json" />
+                <span>Import JSON</span>
+              </label>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Store</th>
+                  <th>Mean demand</th>
+                  <th>Std dev</th>
+                  <th>Priority</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="store-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Results</p>
+              <h2>Recommendation</h2>
+            </div>
+            <div class="chip" id="runtime-chip">0 ms</div>
+          </div>
+          <div class="grid two-cols">
+            <div class="card">
+              <h3>Summary</h3>
+              <ul class="stat-list" id="summary-list"></ul>
+            </div>
+            <div class="card">
+              <h3>Allocation</h3>
+              <div class="table-wrapper compact">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Store</th>
+                      <th>aᵢ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="allocation-table"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
